@@ -4,10 +4,10 @@ This project is heavily influenced by Matteo Pacini's similar project from 2023 
 
 ## Description
 Given the many combinations of AMD Radeon GPUs, the ROCm software that provides the interfaces for machine learning, and the many different requirements for Stable Diffusion, it can be challenging to get a working combination. Compounding the challenge is that many of the various "how to" guides instruct users to pull "latest" tag versions of the various software involved which doesn't always work as expected since some of these projects have changed significantly in short amounts of time. This particular project's goals are to:
-* Build a Docker image that leverages the 6.0.2 ROCm software to execute specivic version of Stable Diffusion / Automatic1111 with AMD GPU support.
+* Build a Docker image based on a **rocm/pytorch** that will install a specific version of Stable Diffusion / Automatic1111 with AMD GPU support compatible with our selected hardware, drivers, and OS.
 * Ensure the image can execute as a user other than root.
 * Provide a docker-compose with common mappings for allowing the user to access the typical configuration and output folders.
-* Provide a final image checkpoint with all Automatic1111 requirements installed to speed up start-up time.
+* Provide instructions on creating a final image checkpoint with all Automatic1111 requirements installed to speed up start-up time.
 
 ## Hardware 
 
