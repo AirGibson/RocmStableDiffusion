@@ -14,14 +14,14 @@ Given the many combinations of AMD Radeon GPUs, the ROCm software that provides 
 
 ⚠️ These Dockerfiles have been tested on my Linux distribution and hardware only. Contributions to expand compatibility are welcomed!
 
-| Distro Name            | Kernel Version        | CPU                           | GPU                                              | VRAM |
-|------------------------|-----------------------|-------------------------------|--------------------------------------------------|------|
-| Ubuntu                 | 22.04.4 LTS           | AMD Ryzen 7 5800X3D (8-core)  | AMD Radeon RX 6900 XT (Navi 21)                  | 16GB |
+| Distro Name            | Kernel Version        | CPU                           | GPU                                              | VRAM | DRIVERS                                                                          |
+|------------------------|-----------------------|-------------------------------|--------------------------------------------------|------|----------------------------------------------------------------------------------|
+| Ubuntu                 | 22.04.4 LTS           | AMD Ryzen 7 5800X3D (8-core)  | AMD Radeon RX 6900 XT (Navi 21)                  | 16GB |Radeon Software for Linux - version 23.40.2 for Ubuntu 22.04.3 HWE with ROCm 6.0.2|
 
 ## Getting Started
 
 ### Dependencies
-The hardware drivers from AMD must be installed on the host system so that the hardware can be exposed to the container.  I have installed the following specific version.  Which version you use could significantly impact compatibility with the underlying software:
+The hardware drivers from AMD must be installed on the host system so that the hardware can be exposed to the container.  I have installed the following specific version.  Please carefully review this before deciding to update your drivers as there may be many other valid reasons you are running different AMD drivers.  Which version you use could significantly impact compatibility with the underlying software:
   
 * Radeon Software for Linux - version 23.40.2 for Ubuntu 22.04.3 HWE with ROCm 6.0.2 - Install the software and grant your user account access to the **render** and **video** groups. 
 ```
@@ -33,7 +33,7 @@ sudo usermod -a -G render,video $LOGNAME
 sudo reboot
 ```
 
-### Get the project, tune the image, and Build your Docker images
+## Get the project, tune the image, and Build your Docker images
 Obtain the project using git and change into the project directory of your choice, then review the entrypoint.sh file to add any options you may need for your particular setup.
 ```
 cd ~
