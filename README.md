@@ -1,6 +1,7 @@
 # RocmStableDiffusion
 Dockerfiles for building an image including Stable Diffusion and kohya_ss running with the required ROCm 6.0.2 software for AMD GPUs.
 This project is heavily influenced by Matteo Pacini's similar project from 2023 which has been closed and archived here: https://github.com/matteo-pacini/RoCMyDocker
+This is in a rough "first draft" state and I welcome all contributions to make this more flexible for other users.
 
 ## Description
 Given the many combinations of AMD Radeon GPUs, the ROCm software that provides the interfaces for machine learning, and the many different requirements for Stable Diffusion, Automatic1111 web ui, and kohya_ss, it can be challenging to get a working combination. Compounding the challenge is that many of the various "how to" guides instruct users to pull "latest" tag versions of the various software involved which doesn't always work as expected since some of these projects have changed significantly in short amounts of time. This particular project's goals are to:
@@ -120,4 +121,3 @@ services:
         image: airgibson/rocmkohyass:1.0
 ```
 
-## Start the Container 
