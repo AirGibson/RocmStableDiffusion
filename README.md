@@ -61,7 +61,7 @@ You can start the two containers via the typical "docker run" command, or using 
 ### Docker Run
 Here are some sample **docker run** commands for starting both containers.
 ```
-docker run --name rocmstablediffusion --restart always -t -d -p 8090:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add render --group-add video --ipc host --shm-size 8G -v $HOME/sd/models/Stable-diffusion:/workdir/stable-diffusion-webui/models/Stable-diffusion -v $HOME/sd/output:/workdir/stable-diffusion-webui/output -v $HOME/sd/styles:/workdir/stable-diffusion-webui/styles -v $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions -v $HOME/sd/models/extensions:/workdir/stable-diffusion-webui/models/extensions -v $HOME/sd/models/VAE:/workdir/stable-diffusion-webui/models/VAE airgibson/rocmstablediffusion:1.0
+docker run --name rocmstablediffusion --restart always -t -d -p 8090:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add video --ipc host --shm-size 8G -v $HOME/sd/models/Stable-diffusion:/workdir/stable-diffusion-webui/models/Stable-diffusion -v $HOME/sd/output:/workdir/stable-diffusion-webui/output -v $HOME/sd/styles:/workdir/stable-diffusion-webui/styles -v $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions -v $HOME/sd/models/extensions:/workdir/stable-diffusion-webui/models/extensions -v $HOME/sd/models/VAE:/workdir/stable-diffusion-webui/models/VAE airgibson/rocmstablediffusion:1.0
  
 docker run --name rocmkohyass --restart always -t -d -p 8091:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add video --ipc host --shm-size 8G airgibson/rocmkohyass:1.0
 ```

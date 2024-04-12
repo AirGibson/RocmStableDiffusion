@@ -1,43 +1,41 @@
-FROM rocm/pytorch:rocm6.0.2_ubuntu22.04_py3.10_pytorch_2.1.2
+FROM ubuntu:22.04
+
+VOLUME /workdir
+
+ARG ROCM_VERSION=6.0.2
+ARG AMDGPU_VERSION=6.0.2
+
+#nightly/rocm6.0, nightly/rocm5.7, nightly/rocm5.6, rocm5.4.2
+ENV PYTORCH_VERSION="torch==2.1.2+rocm6.0 torchvision==0.16.1+rocm6.0 --index-url https://download.pytorch.org/whl/nightly/rocm6.0"
+ENV AUTOMATIC1111_COMMIT="bef51ae"
+ENV EXTRA_OPTIONS="--upcast-sampling --listen"
+ENV RENDER_GID=110
+ENV UNAME="newuser"
+ENV PUID=1000
+ENV PGID=1000
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl libnuma-dev gnupg \
+  && curl -sL https://repo.radeon.com/rocm/rocm.gpg.key | apt-key add - \
+  && printf "deb [arch=amd64] https://repo.radeon.com/rocm/apt/$ROCM_VERSION/ ubuntu main" | tee /etc/apt/sources.list.d/rocm.list \
+  && printf "deb [arch=amd64] https://repo.radeon.com/amdgpu/$AMDGPU_VERSION/ubuntu jammy main" | tee /etc/apt/sources.list.d/amdgpu.list \
+  && printf 'Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600\n' | tee /etc/apt/preferences.d/rocm-pin-600 \
+  && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  sudo \
+  libelf1 \
+  kmod \
+  file \
+  python3 \
+  python3-pip \
+  python3-venv \
+  rocm-dev \
+  rocm-libs \
+  git \
+  build-essential \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 COPY ./entrypoint.sh /entrypoint.sh
 
-# This dockerfile attemps to change things up so that Stable Diffusion can run with GPU access without running the container as root.
-
-# Stable diffusion will need to be able to use the GPU on the host.
-# On my host system, the AMD driver installation created a group named "render" with the ID of 110 to control access to the GPU.
-# Whatever user is executing in the container must have rights to the render group (110 for me) to be able to call the GPU on the host.
-# Inside the pytorch image, it turns out they are already using group 110 for a group named "_ssh".
-
-# The user named 'jenkins' in the pytorch image has the uid:gid of 1000:1000.
-# My ID on my host is 1000 and I want the container to be able to access my various image folders, so I will be running the container as that jenkins user.
-
-
-ARG UNAME=jenkins
-ARG UID=1000
-ARG GID=1000
-ARG RENDERGID=110
-
-RUN id -g $GID &>/dev/null || groupadd -g $GID -o $UNAME \
-  && id -g $UID &>/dev/null || useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME \
-  && usermod -a -G $RENDERGID $UNAME \
-  && chmod +x /entrypoint.sh 
-   
-USER $UNAME
-
-WORKDIR /workdir
-RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
-
-#We want version 1.8.0 of the webui, which is checkout bef51ae
-#We will use a virtual environment since we may be installing kohya_ss which could need conflicting packages.
-
-WORKDIR /workdir/stable-diffusion-webui 
-RUN git checkout bef51ae \
-  && python3 -m venv venv \
-  && . venv/bin/activate \
-  && python -m pip install --upgrade pip wheel \
-  && pip3 install torch==2.0.1+rocm5.4.2 torchvision==0.15.2+rocm5.4.2 --index-url https://download.pytorch.org/whl/rocm5.4.2
-
-#VOLUME /workdir
+RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT [ "/entrypoint.sh" ]
