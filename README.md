@@ -5,7 +5,7 @@ This is in a rough "first draft" state and I welcome all contributions to make t
 
 ## Description
 Given the many combinations of AMD Radeon GPUs, the ROCm software that provides the interfaces for machine learning, and the many different requirements for Stable Diffusion, Automatic1111 web ui, and kohya_ss, it can be challenging to get a working combination. Compounding the challenge is that many of the various "how to" guides instruct users to pull "latest" tag versions of the various software involved which doesn't always work as expected since some of these projects have changed significantly in short amounts of time. This particular project's goals are to:
-* Build a Docker image based on a **rocm/pytorch** that will install a specific version of Stable Diffusion / Automatic1111 and kohya_ss with AMD GPU support compatible with our selected hardware, drivers, and OS.
+* Build a Docker image that will install a specific version of the ROCm software, Stable Diffusion / Automatic1111, and kohya_ss with AMD GPU support compatible with our selected hardware, drivers, and OS.
 * Ensure the image can execute as a user other than root.
 * Provide a docker-compose with common mappings for allowing the user to access the typical configuration and output folders.
 
@@ -34,20 +34,20 @@ sudo reboot
 ```
 
 ## Get the project, tune the image, and Build your Docker images
-Obtain the project using git and change into the project directory of your choice, then review the entrypoint.sh file to add any options you may need for your particular setup.
+Retrive the code for this project using git and change into the project directory of your choice where you would like to build this (your Home directory is suggested below), then review the entrypoint.sh file to add any options you may need for your particular setup.
 ```
 cd ~
 git clone https://github.com/AirGibson/RocmStableDiffusion
 cd ./RocmStableDiffusion/automatic1111
 ```
 
-Once you're ready, build the docker image.
+Once you are ready, build the docker image.
 ```
 docker build -t airgibson/rocmautomatic1111:1.0 .
 ```
 
 ## Set Up Volume Folders
-Create a directory structure for accessing the necessary AUTOMATIC1111 folders such as models, output, etc... so that they can be mounted as volumes.
+Create a directory structure for accessing the necessary AUTOMATIC1111 folders such as models, output, etc... so that they can be mounted as volumes. If you use a different pattern for these, please adjust your volume mounts accordingly in your docker-compose or docker run statements.
 ```
 mkdir -p ~/sd/output
 mkdir ~/sd/extensions
@@ -56,13 +56,14 @@ mkdir ~/sd/styles
 ```
 
 ## Start The Containers
-You can start the two containers via the typical "docker run" command, or using docker-compose.  
+You can start the two containers via the typical "docker run" command, or using docker-compose. The first start-up will take a while as it is pulling AUTOMATIC1111 or kohya_ss and all of the various requirements icluding Pytorch sot that it can be installed using the user specified. After the first time the container is started, it should be much faster unless you remove the container entirely. Note that these are being set up with **--restart always** so that they should start when docker starts. Please adjust these configurations if you don't want them starting / restarting automatically.
 
 ### Docker Run
+Here are some sample **docker run** commands for starting both containers.
 ```
-docker run --name rocmstablediffusion --restart always -i -t -p 8090:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add render --group-add video --ipc host --shm-size 8G -v $HOME/sd/models/Stable-diffusion:/workdir/stable-diffusion-webui/models/Stable-diffusion -v $HOME/sd/output:/workdir/stable-diffusion-webui/output -v $HOME/sd/styles:/workdir/stable-diffusion-webui/styles -v $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions -v $HOME/sd/models/extensions:/workdir/stable-diffusion-webui/models/extensions -v $HOME/sd/models/VAE:/workdir/stable-diffusion-webui/models/VAE airgibson/rocmstablediffusion:1.0
+docker run --name rocmstablediffusion --restart always -t -d -p 8090:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add render --group-add video --ipc host --shm-size 8G -v $HOME/sd/models/Stable-diffusion:/workdir/stable-diffusion-webui/models/Stable-diffusion -v $HOME/sd/output:/workdir/stable-diffusion-webui/output -v $HOME/sd/styles:/workdir/stable-diffusion-webui/styles -v $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions -v $HOME/sd/models/extensions:/workdir/stable-diffusion-webui/models/extensions -v $HOME/sd/models/VAE:/workdir/stable-diffusion-webui/models/VAE airgibson/rocmstablediffusion:1.0
  
-docker run --name rocmkohyass --restart always -i -t -p 8091:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add render --group-add video --ipc host --shm-size 8G airgibson/rocmkohyass:1.0
+docker run --name rocmkohyass --restart always -t -d -p 8091:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add video --ipc host --shm-size 8G airgibson/rocmkohyass:1.0
 ```
 
 ### Docker-Compose
@@ -120,4 +121,22 @@ services:
         shm_size: 8G
         image: airgibson/rocmkohyass:1.0
 ```
+
+### To Watch The Build
+If you wish to connect to the container while it is building things out, use the standard **docker attach** command.  To exit when you are done without disrupting things, use **ctrl-c** to exit the attached terminal. 
+```
+docker attach rocmkohyass
+```
+
+## Launch The GUIs
+Once your container(s) are up and running, simply navigate to the mapped local ports.  In the configurations above, AUTOMATIC1111 is mapped to port 8090 and kohya_ss is mapped to port 8091 so that they can be accessible simultaneously if you want. However, you should avoid actively processing jobs with both applications at the same time as both of them are extreme GPU memory hogs.
+
+| Application     | URL                   |
+|-----------------|-----------------------|
+| AUTOMATIC1111   | http://0.0.0.0:8090   |
+| kohya_ss        | http://0.0.0.0:8091   |
+
+### Once Stable, Save A New Image
+If you are satisfied with the container that has been built, you can also consider making a snapshot using **docker commit** to create a new image with everything completely installed.
+
 
