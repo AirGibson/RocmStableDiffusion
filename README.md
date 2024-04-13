@@ -17,7 +17,7 @@ Given the many combinations of AMD Radeon GPUs, the ROCm software that provides 
 | Distro Name            | Kernel Version        | CPU                 | GPU                                              | VRAM | DRIVERS                                                                          |
 |------------------------|-----------------------|---------------------|--------------------------------------------------|------|----------------------------------------------------------------------------------|
 | Ubuntu                 | 22.04.4 LTS           | AMD Ryzen 7 5800X3D | AMD Radeon RX 6900 XT (Navi 21)                  | 16GB |Radeon Software for Linux - version 23.40.2 for Ubuntu 22.04.3 HWE with ROCm 6.0.2|
-| Ubuntu                 | 22.04.4 LTS           | Ryzen 5 5600X       | AMD Radeon RX 570X                               | 16GB | |
+| Ubuntu                 | 22.04.4 LTS           | Ryzen 5 5600X       | AMD Radeon RX 570X                               |      | |
 
 ## Getting Started
 
