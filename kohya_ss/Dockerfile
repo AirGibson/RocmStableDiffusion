@@ -4,11 +4,9 @@ VOLUME /workdir
 
 ARG ROCM_VERSION=6.0.2
 ARG AMDGPU_VERSION=6.0.2
+ARG KOHYA_SS_COMMIT="c9c4ef1"
 
-
-#nightly/rocm6.0, nightly/rocm5.7, nightly/rocm5.6, rocm5.4.2
 ENV PYTORCH_VERSION="nightly/rocm6.0"
-ENV KOHYA_SS_COMMIT="c9c4ef1"
 ENV EXTRA_OPTIONS="--listen=0.0.0.0 --headless"
 ENV RENDER_GID=110
 ENV UNAME="newuser"
@@ -43,6 +41,18 @@ COPY ./entrypoint.sh /entrypoint.sh
 COPY ./requirements.txt ./requirements.txt
 
 RUN chmod +x /entrypoint.sh
-  
+
+# Create the working directory
+WORKDIR /workdir
+VOLUME /workdir
+
+# Retrieve and prepare the app into a temp directory.  Users may want to set up volumes to the various directories, and GIT CLONE will not work if those directories already exist due to the volume mounts.  
+# This will retrieve the project first, then merge it over to the /workdir/stable-diffusion-webui to deal with those volume conflicts.
+# We will use checkout to switch to a specific version we'd like to use that we know works with this setup.
+RUN mkdir temp \
+&& cd temp \
+&& git clone https://github.com/bmaltais/kohya_ss \
+&& cd ./kohya_ss \
+&& git checkout $KOHYA_SS_COMMIT
 
 ENTRYPOINT [ "/entrypoint.sh" ]

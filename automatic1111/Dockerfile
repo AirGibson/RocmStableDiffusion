@@ -4,16 +4,15 @@ VOLUME /workdir
 
 ARG ROCM_VERSION=6.0.2
 ARG AMDGPU_VERSION=6.0.2
+ARG AUTOMATIC1111_COMMIT="bef51ae"
 
-#nightly/rocm6.0, nightly/rocm5.7, nightly/rocm5.6, rocm5.4.2
-ENV PYTORCH_VERSION="torch==2.1.2+rocm6.0 torchvision==0.16.1+rocm6.0 --index-url https://download.pytorch.org/whl/nightly/rocm6.0"
-ENV AUTOMATIC1111_COMMIT="bef51ae"
 ENV EXTRA_OPTIONS="--upcast-sampling --listen"
 ENV RENDER_GID=110
 ENV UNAME="newuser"
 ENV PUID=1000
 ENV PGID=1000
 
+# Build the base linux system
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl libnuma-dev gnupg \
   && curl -sL https://repo.radeon.com/rocm/rocm.gpg.key | apt-key add - \
   && printf "deb [arch=amd64] https://repo.radeon.com/rocm/apt/$ROCM_VERSION/ ubuntu main" | tee /etc/apt/sources.list.d/rocm.list \
@@ -37,5 +36,18 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
 COPY ./entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
+
+# Create the working directory
+WORKDIR /workdir
+VOLUME /workdir
+
+# Retrieve and prepare the app into a temp directory.  Users may want to set up volumes to the various directories, and GIT CLONE will not work if those directories already exist due to the volume mounts.  
+# This will retrieve the project first, then merge it over to the /workdir/stable-diffusion-webui to deal with those volume conflicts.
+# We will use checkout to switch to a specific version we'd like to use that we know works with this setup.
+RUN mkdir temp \
+&& cd temp \
+&& git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui \
+&& cd ./stable-diffusion-webui \
+&& git checkout $AUTOMATIC1111_COMMIT
 
 ENTRYPOINT [ "/entrypoint.sh" ]
