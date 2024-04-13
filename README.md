@@ -106,12 +106,10 @@ services:
         shm_size: 8G
         image: airgibson/rocmautomatic1111:1.0
         volumes:
-            - $HOME/sd/models/Stable-diffusion:/workdir/stable-diffusion-webui/models/Stable-diffusion 
+            - $HOME/sd/models:/workdir/stable-diffusion-webui/models
             - $HOME/sd/output:/workdir/stable-diffusion-webui/output 
             - $HOME/sd/styles:/workdir/stable-diffusion-webui/styles 
-            - $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions 
-            - $HOME/sd/models/extensions:/workdir/stable-diffusion-webui/models/extensions 
-            - $HOME/sd/models/VAE:/workdir/stable-diffusion-webui/models/VAE 
+            - $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions
 
     rocmkohyass:
         container_name: rocmkohyass
