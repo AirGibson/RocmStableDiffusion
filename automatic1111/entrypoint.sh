@@ -1,11 +1,14 @@
 #!/bin/bash
 set -x
 
-# Create the user this process should be running as, create the render group with the proper matching ID, grant the user rights to the video and render groups, and grant it ownership of the workdir
+# Create the user this process should be running as, create the render group with the proper matching ID, and grant the user rights to the video and render groups.
 groupadd -g $PUID $UNAME 
 groupadd -g $RENDER_GID render 
 useradd -m $UNAME -u $PUID -g $PGID  
 usermod -a -G video,render $UNAME
+
+# Copy the application over to its permanent location, merging it with existing folders that may have been created from the volume mounts.  Then, delete the 
+# old temp files and change ownership of everything in /workdir to the PUID / GUID provided.
 cp -rl /workdir/temp/stable-diffusion-webui/ /workdir/
 rm -rdf /workdir/temp
 chown $PUID:$PGID -R /workdir
