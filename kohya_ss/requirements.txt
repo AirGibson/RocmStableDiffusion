@@ -42,5 +42,6 @@ transformers==4.36.2
 voluptuous==0.13.1
 wandb==0.15.11
 scipy==1.11.4
+# Note from AirGibson: The following script was disabled in this requirement package as it was causing installation errors. 
 # for kohya_ss library
 #-e ./sd-scripts # no_verify leave this to specify not checking this a verification stage
