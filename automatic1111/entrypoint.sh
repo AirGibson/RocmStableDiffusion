@@ -14,6 +14,8 @@ rm -rdf /workdir/temp
 chown $PUID:$PGID -R /workdir
 
 # Switch to the new user that was created and start the service.  First run will take a significant amount of time to retrieve all requirements and initial model.
+# Note that this application installs its own requirements, inlcuding Pytorch 5.4.2.  If you want to use a different version of pytorch, it will require modifications
+# of the AUTOMATIC1111 shell scripts.
 exec sudo -u $UNAME env EXTRA_OPTIONS="$EXTRA_OPTIONS" /bin/bash -c '
 set -x
 cd /workdir/stable-diffusion-webui
