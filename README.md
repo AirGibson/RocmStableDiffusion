@@ -77,7 +77,7 @@ If you have environment variable changes you need to make such as PUID, PGID, et
 ### Docker Run
 Here are some sample `docker run` commands for starting both containers.
 ```
-docker run --name rocmautomatic1111 --restart always -t -d -p 8090:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add video --ipc host --shm-size 8G -v $HOME/sd/models:/workdir/stable-diffusion-webui/models -v $HOME/sd/output:/workdir/stable-diffusion-webui/output -v $HOME/sd/styles:/workdir/stable-diffusion-webui/styles -v $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions airgibson/rocmautomatic1111:1.0 airgibson/rocmautomatic1111:1.0
+docker run --name rocmautomatic1111 --restart always -t -d -p 8090:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add video --ipc host --shm-size 8G -v $HOME/sd/models:/workdir/stable-diffusion-webui/models -v $HOME/sd/output:/workdir/stable-diffusion-webui/output -v $HOME/sd/styles:/workdir/stable-diffusion-webui/styles -v $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions -v $HOME/sd/embeddings:/workdir/stable-diffusion-webui/embeddings airgibson/rocmautomatic1111:1.0 airgibson/rocmautomatic1111:1.0
  
 docker run --name rocmkohyass --restart always -t -d -p 8091:7860 --cap-add SYS_PTRACE --security-opt seccomp=unconfined --device /dev/kfd --device /dev/dri --group-add video --ipc host --shm-size 8G airgibson/rocmkohyass:1.0
 ```
