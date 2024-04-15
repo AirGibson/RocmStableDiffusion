@@ -126,7 +126,6 @@ services:
             - /dev/kfd
             - /dev/dri
         group_add:
-            - render
             - video
         ipc: host
         shm_size: 8G
