@@ -63,6 +63,7 @@ mkdir -p ~/sd/output
 mkdir ~/sd/models
 mkdir ~/sd/extensions
 mkdir ~/sd/styles
+mkdir ~/sd/embeddings
 ```
 
 For kohya_ss, part of the configuration in their UI is specifying the various input / output directories, so it will be difficult for me to make a recommendation on how to set that up. Set up your own volumes as you see fit.
@@ -110,6 +111,7 @@ services:
             - $HOME/sd/output:/workdir/stable-diffusion-webui/output 
             - $HOME/sd/styles:/workdir/stable-diffusion-webui/styles 
             - $HOME/sd/extensions:/workdir/stable-diffusion-webui/extensions
+            - $HOME/sd/embeddings:/workdir/stable-diffusion-webui/embeddings
 
     rocmkohyass:
         container_name: rocmkohyass
