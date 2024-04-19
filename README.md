@@ -140,6 +140,9 @@ If you wish to connect to the container while it is building things out, use the
 docker attach rocmkohyass
 ```
 
+### A Note On Image Size
+These images are **large** primarily due to the large size of the _amdgpu-install_ package.  The images will be approximately 24 GB before they have even started to install the applications.  The final image plus the newly installed applications will likely be approximately 27 GB in size.  This is enormous compared to most containers, but it is unavoidable due to the installation of this AMD software.
+
 ## Launch The GUIs
 Once your container(s) are up and running, simply navigate to the mapped local ports.  In the configurations above, AUTOMATIC1111 is mapped to port 8090 and kohya_ss is mapped to port 8091 so that they can be accessible simultaneously if you want. However, you should avoid actively processing jobs with both applications at the same time as both of them are extreme GPU memory hogs.
 
